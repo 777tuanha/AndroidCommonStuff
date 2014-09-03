@@ -1,0 +1,28 @@
+package cst.com.basegrub.utils;
+
+import android.app.Activity;
+import android.app.ProgressDialog;
+
+public class MyProgressHUD {
+
+	private ProgressDialog mProgressDialog;
+	public MyProgressHUD(Activity activity)
+	{
+		mProgressDialog = new ProgressDialog(activity);		
+		mProgressDialog.setProgressStyle(ProgressDialog.THEME_HOLO_LIGHT);
+		mProgressDialog.setCancelable(false);
+	}
+	public void showHUD()
+	{
+		mProgressDialog.setMessage("Loading");
+		mProgressDialog.show();
+	}
+	public void showHUD(String message)
+	{
+		mProgressDialog.setMessage(message);
+		mProgressDialog.show();
+	}
+	public void dismissHUD() {
+		mProgressDialog.dismiss();
+	}
+}

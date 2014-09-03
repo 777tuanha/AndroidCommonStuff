@@ -1,0 +1,6 @@
+package dev.quinn.androicommonstuff.asynctask;
+
+public interface IDelegate {
+
+	
+}

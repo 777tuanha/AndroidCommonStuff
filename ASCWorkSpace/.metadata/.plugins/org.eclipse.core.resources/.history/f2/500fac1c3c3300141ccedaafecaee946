@@ -1,0 +1,5 @@
+package dev.quinn.androicommonstuff.utils;
+
+public class MyConstant {
+
+}

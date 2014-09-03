@@ -1,0 +1,208 @@
+package com.cst.gbbasicapp.customview;
+
+import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ListFragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.cst.gbbasicapp.MainActivity;
+import com.cst.gbbasicapp.R;
+import com.cst.gbbasicapp.itemmenu.HomeFragment;
+import com.cst.gbbasicapp.itemmenu.MyAccount;
+
+import cst.com.basegrub.utils.MyConstant;
+
+
+public class SlideMenuList extends ListFragment implements
+OnItemClickListener {
+
+	private FragmentManager fManager;
+	private Boolean orderOnline = false;
+	public static boolean fromOrder = false;
+
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.slide_menu_list, null);
+	}
+
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		SlideMenuAdapter adapter = new SlideMenuAdapter(getActivity());
+//		orderOnline = Singleton.getIntance().isOrderOnline();
+		fManager = getActivity().getSupportFragmentManager();
+		adapter.add(new SampleItem(R.drawable.slide_icon_home, "Home"));
+
+		adapter.add(new SampleItem(R.drawable.slide_icon_my_account, "My Account"));
+
+
+		setListAdapter(adapter);
+		getListView().setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int pos,
+					long arg3) {
+				// TODO Auto-generated method stub
+//				if (Singleton.getIntance().isLogin()) {
+
+					
+					for (int i = 0; i < fManager.getBackStackEntryCount(); i++) {
+						fManager.popBackStack(fManager.getBackStackEntryAt(i)
+								.getId(),
+								FragmentManager.POP_BACK_STACK_INCLUSIVE);
+					}
+//					}
+
+					replaceItemMenu(pos);
+//				} else {
+//					needLogin();
+//				}
+			}
+		});
+	}
+
+	private void needLogin() {
+//		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//		builder.setTitle("")
+//		.setMessage(Constant.kMessageNeedLogin2)
+//		.setCancelable(false)
+//		.setPositiveButton("Okay",
+//				new DialogInterface.OnClickListener() {
+//			public void onClick(DialogInterface dialog, int id) {
+//				MainFragmentActivity.menu.toggle();
+//				onSignin();
+//			}
+//		})
+//		.setNegativeButton("Cancel",
+//				new DialogInterface.OnClickListener() {
+//			public void onClick(DialogInterface dialog, int id) {
+//				dialog.cancel();
+//			}
+//		});
+//		AlertDialog alert = builder.create();
+//		alert.show();
+	}
+
+	private void onSignin() {
+//		FragmentTransaction fTransaction = fManager.beginTransaction();
+//		SignInFragment singin = new SignInFragment();
+//		fTransaction.replace(R.id.mainfragment, singin);
+//		fTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//		fTransaction.addToBackStack(null);
+//		fTransaction.commit();
+	}
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		getActivity().getWindow().setSoftInputMode(
+				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+	}
+	private void replaceItemMenu(int pos) {
+		//		boolean isClear = Util.clearDataCache(getActivity());
+
+		FragmentTransaction fTransaction = fManager.beginTransaction();
+		
+			switch (pos) {
+			case 0: {
+				HomeFragment homeFragment = (HomeFragment) fManager
+						.findFragmentByTag(MyConstant.kTagHomeFragment);
+				if (homeFragment != null) {
+					for (int i = 1; i < fManager.getBackStackEntryCount(); i++) {
+						fManager.popBackStack(fManager.getBackStackEntryAt(i)
+								.getId(),
+								FragmentManager.POP_BACK_STACK_INCLUSIVE);
+												fManager.popBackStack();
+						
+//						fManager.popBackStack(Constant.kTagHomeFragment, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+					}
+				} else {
+					homeFragment = new HomeFragment();
+					fTransaction.replace(R.id.main_fragment, homeFragment,
+							MyConstant.kTagHomeFragment);
+					fTransaction.commit();			
+				}
+
+				MainActivity.menu.toggle();
+				break;
+			}
+			case 1:
+				Log.w("+++ 1111 myaccount back stack :",
+						"" + fManager.getBackStackEntryCount());
+				MyAccount accfragment = new MyAccount();
+				fTransaction.replace(R.id.main_fragment, accfragment);
+				// fTransaction
+				// .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+				// fTransaction.addToBackStack(null);
+				fTransaction.commit();
+				Log.w("+++222 myaccount back stack :",
+						"" + fManager.getBackStackEntryCount());
+				MainActivity.menu.toggle();
+				break;
+			
+
+			default:
+				break;
+			}
+
+
+	}
+
+	private class SampleItem {
+		public String tag;
+//		public int iconRes;
+		public int iconImage;
+		public TextView tv;
+
+		public SampleItem(int iconImage, String tag) {
+			this.tag = tag;
+			this.tv = tv;
+//			this.iconRes = iconRes;
+			this.iconImage = iconImage;
+		}
+	}
+
+	public class SlideMenuAdapter extends ArrayAdapter<SampleItem> {
+
+		public SlideMenuAdapter(Context context) {
+			super(context, 0);
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent) {
+			if (convertView == null) {
+				convertView = LayoutInflater.from(getContext()).inflate(
+						R.layout.slide_row, null);
+			}
+			ImageView icon_image = (ImageView) convertView
+					.findViewById(R.id.row_icon_image);
+			icon_image.setImageResource(getItem(position).iconImage);
+
+			
+			TextView title = (TextView) convertView
+					.findViewById(R.id.row_title);
+			title.setText(getItem(position).tag);
+
+
+
+			return convertView;
+		}
+
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		// TODO Auto-generated method stub
+
+	}
+
+}
